@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,7 +26,10 @@ public class OilTransaction {
     private long volume;
 
     @Column
-    private long price;
+    private BigDecimal price;
+
+    @Column
+    private String operation;
 
     @Column
     @CreationTimestamp
