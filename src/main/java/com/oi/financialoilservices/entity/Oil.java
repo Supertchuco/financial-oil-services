@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Data
-@Entity(name = "OilTransaction")
-@Table(name = "OilTransaction")
+@Entity(name = "Oil")
+@Table(name = "Oil")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})

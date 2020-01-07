@@ -1,25 +1,36 @@
 package com.oi.financialoilservices.service;
 
+import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
-import com.oi.financialoilservices.exception.CalculateGeometricMeanException;
-import com.oi.financialoilservices.exception.CalculatePriceEarningsRatioException;
-import com.oi.financialoilservices.exception.CalculateRevenueYieldStandardException;
-import com.oi.financialoilservices.exception.CalculateVolumeWeightedOilPriceException;
+import com.oi.financialoilservices.exception.*;
+import com.oi.financialoilservices.repository.OilRepository;
+import com.oi.financialoilservices.repository.OilTransactionRepository;
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service
 public class OilService {
 
+    @Autowired
+    private OilRepository oilRepository;
+
+    @Autowired
+    private OilTransactionRepository oilTransactionRepository;
+
     public BigDecimal calculateRevenueYield(final int fixedRevenue, final BigDecimal price) {
         try {
             log.info("Calculate Revenue Yield Standard");
-            return new BigDecimal(fixedRevenue).divide(price);
+            return BigDecimal.valueOf(fixedRevenue).divide(
+                    price, 2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Revenue Yield Standard", exception);
             throw new CalculateRevenueYieldStandardException();
@@ -29,7 +40,8 @@ public class OilService {
     public BigDecimal calculateRevenueYield(final int variableRevenue, final BigDecimal oilBarrelValue, final BigDecimal price) {
         try {
             log.info("Calculate Revenue Yield Premium");
-            return (new BigDecimal(variableRevenue).multiply(oilBarrelValue)).divide(price);
+            return (BigDecimal.valueOf(variableRevenue).multiply(oilBarrelValue).setScale(2, RoundingMode.HALF_EVEN))
+                    .divide(price, 2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Revenue Yield Premium", exception);
             throw new CalculateRevenueYieldStandardException();
@@ -46,50 +58,61 @@ public class OilService {
         }
     }
 
-    public long calculateGeometricMean() {
-
-        return 0;
-    }
-
-
-
-/*    public BigDecimal geometricMean(double[] data)
-    {
-        double sum = data[0];
-
-        for (int i = 1; i < data.length; i++) {
-            sum *= data[i];
-        }
-        return BigDecimal.valueOf(Math.pow(sum, 1.0 / data.length));
-    }*/
-
-    public BigDecimal geometricMean(List<BigDecimal> values) {
+    public BigDecimal calculateGeometricMean(final List<BigDecimal> values) {
         try {
             log.info("Calculate Volume Weighted Oil Price");
             double[] arrayValues = values.stream().mapToDouble(BigDecimal::doubleValue).toArray();
-            return new BigDecimal(StatUtils.geometricMean(arrayValues));
+            return BigDecimal.valueOf(StatUtils.geometricMean(arrayValues)).setScale(2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate geometric mean of prices for all the types of oil", exception);
             throw new CalculateGeometricMeanException();
         }
     }
 
-    public BigDecimal calculateVolumeWeightedOilPrice(final List<OilTransaction> transactions, final BigDecimal price) {
-
-        // long totalQuantity =  transactons.stream().mapToLong(o -> o.getVolume()).sum();
-
+    public BigDecimal calculateVolumeWeightedOilPrice(final List<OilTransaction> transactions) {
         long totalQuantity = 0;
-        BigDecimal totalQuantityXPrice = null;
+        BigDecimal totalQuantityXPrice = BigDecimal.ZERO;
         try {
             log.info("Calculate Volume Weighted Oil Price");
             for (OilTransaction transaction : transactions) {
                 totalQuantity += transaction.getVolume();
-                totalQuantityXPrice.add(new BigDecimal(transaction.getVolume()).multiply(price));
+                totalQuantityXPrice = totalQuantityXPrice.add(BigDecimal.valueOf(transaction.getVolume()).multiply(transaction.getPrice()).setScale(2, RoundingMode.HALF_EVEN));
             }
-            return totalQuantityXPrice.divide(new BigDecimal(totalQuantity));
+            return totalQuantityXPrice.divide(BigDecimal.valueOf(totalQuantity)).setScale(2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Volume Weighted Oil Price", exception);
             throw new CalculateVolumeWeightedOilPriceException();
+        }
+    }
+
+    public Oil persistOilRegistry(final Oil oil) {
+        log.info("Persist Oil registry on database");
+        try {
+            return oilRepository.save(oil);
+        } catch (Exception exception) {
+            log.error("Error to persist ne oil registry", exception);
+            throw new SaveOilResistryException();
+        }
+    }
+
+
+    public List<Oil> getOilRegistryOnDatabase(final String oilId) {
+        log.info("Get Oil registry on database");
+        try {
+            return (StringUtils.isBlank(oilId)) ? oilRepository.findAll() : Arrays.asList(oilRepository.findById(oilId));
+        } catch (Exception exception) {
+            log.error("Error to persist ne oil registry", exception);
+            throw new GetOilException();
+        }
+    }
+
+    public OilTransaction persistOilTransactionOnDatabase(final OilTransaction oilTransaction) {
+        log.info("Persist Oil transaction registry on database");
+        try {
+            return oilTransactionRepository.save(oilTransaction);
+        } catch (Exception exception) {
+            log.error("Error to persist ne oil registry", exception);
+            throw new SaveOilTransactionRegistryException();
         }
     }
 }
