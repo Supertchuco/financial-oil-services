@@ -1,11 +1,14 @@
 package com.oi.financialoilservices.service;
 
+import com.oi.financialoilservices.dto.InputOilDto;
+import com.oi.financialoilservices.dto.InputOilTransactionDto;
 import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
+import com.oi.financialoilservices.entity.OilType;
 import com.oi.financialoilservices.exception.*;
 import com.oi.financialoilservices.repository.OilRepository;
 import com.oi.financialoilservices.repository.OilTransactionRepository;
-import io.micrometer.core.instrument.util.StringUtils;
+import com.oi.financialoilservices.repository.OilTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -22,6 +26,9 @@ public class OilService {
 
     @Autowired
     private OilRepository oilRepository;
+
+    @Autowired
+    private OilTypeRepository oilTypeRepository;
 
     @Autowired
     private OilTransactionRepository oilTransactionRepository;
@@ -51,7 +58,7 @@ public class OilService {
     public BigDecimal calculatePriceEarningsRatio(final BigDecimal price, final int revenue) {
         try {
             log.info("Calculate Price-Earnings Ratio");
-            return price.divide(new BigDecimal(revenue));
+            return price.divide(BigDecimal.valueOf(revenue));
         } catch (Exception exception) {
             log.error("Error to calculate Price-Earnings Ratio", exception);
             throw new CalculatePriceEarningsRatioException();
@@ -78,41 +85,100 @@ public class OilService {
                 totalQuantity += transaction.getVolume();
                 totalQuantityXPrice = totalQuantityXPrice.add(BigDecimal.valueOf(transaction.getVolume()).multiply(transaction.getPrice()).setScale(2, RoundingMode.HALF_EVEN));
             }
-            return totalQuantityXPrice.divide(BigDecimal.valueOf(totalQuantity)).setScale(2, RoundingMode.HALF_EVEN);
+            return totalQuantityXPrice.divide(BigDecimal.valueOf(totalQuantity), 2, RoundingMode.HALF_EVEN).setScale(2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Volume Weighted Oil Price", exception);
             throw new CalculateVolumeWeightedOilPriceException();
         }
     }
 
-    public Oil persistOilRegistry(final Oil oil) {
+    public Oil persistOilRegistry(final InputOilDto inputOilDto) {
         log.info("Persist Oil registry on database");
         try {
+            final OilType oilType = initializeOilTypeObject(inputOilDto.getOilTypeId());
+            final Oil oil = (isNull(inputOilDto.getVariableRevenue())) ? new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getOilBarrelValue()) :
+                    new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getVariableRevenue(), inputOilDto.getOilBarrelValue());
             return oilRepository.save(oil);
+        } catch (OilTypeRegistryNotFoundException oilTypeRegistryNotFoundException) {
+            throw oilTypeRegistryNotFoundException;
         } catch (Exception exception) {
-            log.error("Error to persist ne oil registry", exception);
+            log.error("Error to persist oil registry on database", exception);
             throw new SaveOilResistryException();
         }
     }
 
 
-    public List<Oil> getOilRegistryOnDatabase(final String oilId) {
+    public Oil getOilRegistryOnDatabase(final String oilId) {
         log.info("Get Oil registry on database");
         try {
-            return (StringUtils.isBlank(oilId)) ? oilRepository.findAll() : Arrays.asList(oilRepository.findById(oilId));
+            return oilRepository.findByOilId(oilId);
         } catch (Exception exception) {
-            log.error("Error to persist ne oil registry", exception);
+            log.error("Error to get oil registry on database", exception);
             throw new GetOilException();
         }
     }
 
-    public OilTransaction persistOilTransactionOnDatabase(final OilTransaction oilTransaction) {
-        log.info("Persist Oil transaction registry on database");
+    public List<Oil> getOilRegistryOnDatabase() {
+        log.info("Get all Oil registries on database");
         try {
-            return oilTransactionRepository.save(oilTransaction);
+            return oilRepository.findAll();
+        } catch (Exception exception) {
+            log.error("Error to get all oil registries on database", exception);
+            throw new GetOilException();
+        }
+    }
+
+    public OilTransaction persistOilTransactionOnDatabase(final InputOilTransactionDto inputOilTransactionDto) {
+        log.info("Persist Oil transaction registry on database");
+// validate
+        final Oil oil = oilRepository.findByOilId(inputOilTransactionDto.getOilId());
+
+        if (isNull(oil)) {
+            // nao existe
+        }
+
+        try {
+            return oilTransactionRepository.save(new OilTransaction(inputOilTransactionDto.getVolume(), inputOilTransactionDto.getPrice(),
+                    inputOilTransactionDto.getOperation(), initializeOilObject(inputOilTransactionDto.getOilId())));
+        } catch (OilRegistryNotFoundException oilRegistryNotFoundException) {
+            throw oilRegistryNotFoundException;
         } catch (Exception exception) {
             log.error("Error to persist ne oil registry", exception);
             throw new SaveOilTransactionRegistryException();
         }
+    }
+
+    public List<OilTransaction> getOilTransactionOnDatabase(final long oilTransactionId) {
+        log.info("Get Oil transaction(s) registry on database");
+        try {
+            return oilTransactionRepository.findAllWithTransactionDateTimeUntil30Minutes();
+        } catch (Exception exception) {
+            log.error("Error to get oil transaction(s) registry", exception);
+            throw new GetOilTransactionRegistryException();
+        }
+    }
+
+    private void validateInputOilTransaction(final InputOilTransactionDto inputOilTransactionDto) {
+        log.info("Validate Input oil transaction");
+    }
+
+    private Oil initializeOilObject(final String oilId) {
+        log.info("Initialize Oil object");
+        final Oil oil = oilRepository.findByOilId(oilId);
+        if (isNull(oil)) {
+            log.error("Oil registry not found in database by id: {}", oilId);
+            throw new OilRegistryNotFoundException();
+        }
+        return oil;
+    }
+
+    private OilType initializeOilTypeObject(final String oilTypeId) {
+        log.info("Initialize Oil object");
+        final OilType oilType = oilTypeRepository.findByOilType(oilTypeId);
+        if (isNull(oilType)) {
+            log.error("Oil type registry not found in database by id: {}", oilTypeId);
+            throw new OilTypeRegistryNotFoundException();
+        }
+        return oilType;
     }
 }

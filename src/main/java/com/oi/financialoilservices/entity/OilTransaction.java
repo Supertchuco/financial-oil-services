@@ -1,11 +1,13 @@
 package com.oi.financialoilservices.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
-public class OilTransaction {
+public class OilTransaction implements Serializable {
 
     @Id
     @GeneratedValue
@@ -31,7 +33,19 @@ public class OilTransaction {
     @Column
     private String operation;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "oilId")
+    @JsonManagedReference
+    private Oil oil;
+
     @Column
     @CreationTimestamp
     private LocalDateTime transactionDateTime;
+
+    public OilTransaction(final long volume, final BigDecimal price, final String operation, final Oil oil) {
+        this.volume = volume;
+        this.price = price;
+        this.operation = operation;
+        this.oil = oil;
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface OilRepository extends CrudRepository<Oil, Long> {
 
-    Oil findById(final String oidId);
+    Oil findByOilId(final String oidId);
 
     List<Oil> findAll();
 }

@@ -1,5 +1,7 @@
 package com.oi.financialoilservices.controller;
 
+import com.oi.financialoilservices.dto.InputOilDto;
+import com.oi.financialoilservices.dto.InputOilTransactionDto;
 import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.service.OilService;
@@ -36,11 +38,11 @@ public class OilController {
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
 
-    public Oil inputOil(@Valid @RequestBody Oil oil) {
-        return oilService.persistOilRegistry(oil);
+    public Oil inputOil(@Valid @RequestBody InputOilDto inputOilDto) {
+        return oilService.persistOilRegistry(inputOilDto);
     }
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "/{oilId}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Get oil registry by id on database or if id is null get all oil registries on database.")
     @ApiResponses({
@@ -48,8 +50,20 @@ public class OilController {
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
-    public List<Oil> getOil(@RequestBody String oilId) {
+    public Oil getOilById(@PathVariable String oilId) {
         return oilService.getOilRegistryOnDatabase(oilId);
+    }
+
+    @GetMapping(value = "/")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get all oil registries on database.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = Oil.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = String.class),
+            @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
+    })
+    public List<Oil> getAllOilRegistries() {
+        return oilService.getOilRegistryOnDatabase();
     }
 
     @PostMapping(value = "/transaction")
@@ -60,8 +74,20 @@ public class OilController {
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
-    public OilTransaction inputOilTransaction(@Valid @RequestBody OilTransaction oilTransaction) {
-        return oilService.persistOilTransactionOnDatabase(oilTransaction);
+    public OilTransaction inputOilTransaction(@Valid @RequestBody InputOilTransactionDto inputOilTransactionDto) {
+        return oilService.persistOilTransactionOnDatabase(inputOilTransactionDto);
+    }
+
+    @GetMapping(value = "/transaction/{transactionId}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Retrieve exam on database.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = OilTransaction.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = String.class),
+            @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
+    })
+    public List<OilTransaction> getOilTransaction(@PathVariable long transactionId) {
+        return oilService.getOilTransactionOnDatabase(transactionId);
     }
 
 }

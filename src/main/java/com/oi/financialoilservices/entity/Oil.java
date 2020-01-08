@@ -1,10 +1,13 @@
 package com.oi.financialoilservices.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @Entity(name = "Oil")
@@ -12,14 +15,16 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
-public class Oil {
+public class Oil implements Serializable {
 
     @Id
     @Column
-    private String oidId;
+    private String oilId;
 
-    @Column
-    private String type;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "oilType")
+    @JsonManagedReference
+    private OilType oilType;
 
     @Column
     private int fixedRevenue;
@@ -28,5 +33,12 @@ public class Oil {
     private int variableRevenue;
 
     @Column
-    private long oilBarrelValue;
+    private BigDecimal oilBarrelValue;
+
+    public Oil(final String oilId, final OilType oilType, final int fixedRevenue, final BigDecimal oilBarrelValue) {
+        this.oilId = oilId;
+        this.oilType = oilType;
+        this.fixedRevenue = fixedRevenue;
+        this.oilBarrelValue = oilBarrelValue;
+    }
 }

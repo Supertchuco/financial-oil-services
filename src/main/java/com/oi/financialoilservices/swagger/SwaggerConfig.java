@@ -12,9 +12,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
-/**
- * Swagger configuration.
- */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
@@ -27,15 +24,14 @@ public class SwaggerConfig {
 
     private Predicate<String> postPaths() {
         return or(
-                regex("/user.*"),
-                regex("/exam.*"),
-                regex("/healthCareInstitution.*")
+                regex("/oil.*"),
+                regex("/oil/transaction.*")
         );
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("Account Transaction API")
-                .description("Account Transaction API reference for developers")
+        return new ApiInfoBuilder().title("Oil Service API")
+                .description("Oil Service API reference for developers")
                 .contact("rafael.whatsthestory@gmail.com").version("1.0").build();
     }
 

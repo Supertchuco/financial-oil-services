@@ -22,8 +22,8 @@ public class OilServiceTest {
 
     @Test
     public void shouldCalculateVolumeWeightedOilPriceWithSuccess() {
-        List<OilTransaction> transactions = Arrays.asList(new OilTransaction(1L, 20, BigDecimal.valueOf(10.20), null, null),
-                new OilTransaction(2L, 30, BigDecimal.valueOf(10.21), null, null), new OilTransaction(3L, 75,
+        List<OilTransaction> transactions = Arrays.asList(new OilTransaction(1L, BigDecimal.valueOf(10.20), null, null),
+                new OilTransaction(2L, BigDecimal.valueOf(10.21), null, null), new OilTransaction(3L,
                         BigDecimal.valueOf(10.22), null, null));
         assertEquals(BigDecimal.valueOf(10.21).setScale(2, RoundingMode.HALF_EVEN), oilService.calculateVolumeWeightedOilPrice(transactions));
     }
