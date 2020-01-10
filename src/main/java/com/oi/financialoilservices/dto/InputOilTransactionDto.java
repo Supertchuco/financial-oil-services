@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class InputOilTransactionDto implements Serializable {
+public class InputOilTransactionDto extends BaseDto implements Serializable {
 
     private String operation;
 

@@ -1,18 +1,13 @@
 package com.oi.financialoilservices.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.oi.financialoilservices.entity.OilType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
 @SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
-public class InputOilDto implements Serializable {
+public class InputOilDto extends BaseDto implements Serializable {
 
     private String id;
 
@@ -23,4 +18,5 @@ public class InputOilDto implements Serializable {
     private int variableRevenue;
 
     private BigDecimal oilBarrelValue;
+
 }

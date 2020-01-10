@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -94,6 +96,7 @@ public class OilService {
 
     public Oil persistOilRegistry(final InputOilDto inputOilDto) {
         log.info("Persist Oil registry on database");
+        inputOilDto.validate(inputOilDto);
         try {
             final OilType oilType = initializeOilTypeObject(inputOilDto.getOilTypeId());
             final Oil oil = (isNull(inputOilDto.getVariableRevenue())) ? new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getOilBarrelValue()) :
@@ -106,7 +109,6 @@ public class OilService {
             throw new SaveOilResistryException();
         }
     }
-
 
     public Oil getOilRegistryOnDatabase(final String oilId) {
         log.info("Get Oil registry on database");
@@ -130,7 +132,7 @@ public class OilService {
 
     public OilTransaction persistOilTransactionOnDatabase(final InputOilTransactionDto inputOilTransactionDto) {
         log.info("Persist Oil transaction registry on database");
-// validate
+        inputOilTransactionDto.validate(inputOilTransactionDto);
         final Oil oil = oilRepository.findByOilId(inputOilTransactionDto.getOilId());
 
         if (isNull(oil)) {
@@ -158,8 +160,17 @@ public class OilService {
         }
     }
 
-    private void validateInputOilTransaction(final InputOilTransactionDto inputOilTransactionDto) {
-        log.info("Validate Input oil transaction");
+    public List<OilTransaction> getOilTransactionOnDatabaseByLast30Minutes() {
+        log.info("Get Oil transaction(s) registry on database");
+        try {
+            Timestamp initialTimestamp = new Timestamp(new Date().getTime());
+            Timestamp finalTimestamp = new Timestamp(new Date(new Date().getTime() - (5 * 60000)).getTime());
+
+            return oilTransactionRepository.findByTransactionDateTimeBetween(initialTimestamp, finalTimestamp);
+        } catch (Exception exception) {
+            log.error("Error to get oil transaction(s) registry", exception);
+            throw new GetOilTransactionOnDatabaseByLast30MinutesException();
+        }
     }
 
     private Oil initializeOilObject(final String oilId) {
