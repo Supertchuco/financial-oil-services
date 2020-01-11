@@ -22,7 +22,7 @@ public class OilTransaction implements Serializable {
     @Id
     @GeneratedValue
     @Column
-    private long id;
+    private long transactionId;
 
     @Column
     private long volume;
