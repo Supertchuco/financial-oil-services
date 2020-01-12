@@ -1,13 +1,17 @@
 package com.oi.financialoilservices.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Data
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
-public class InputOilDto extends BaseDto implements Serializable {
+public class InputOilDto implements Serializable {
 
     private String id;
 

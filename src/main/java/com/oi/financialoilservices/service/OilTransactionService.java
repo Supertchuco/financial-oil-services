@@ -1,10 +1,12 @@
 package com.oi.financialoilservices.service;
 
 import com.oi.financialoilservices.dto.InputOilTransactionDto;
+import com.oi.financialoilservices.dto.ResponseOilTransactionDto;
 import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
-import com.oi.financialoilservices.exception.GetOilTransactionOnDatabaseByLast30MinutesException;
+import com.oi.financialoilservices.enumerator.Operations;
 import com.oi.financialoilservices.exception.GetOilTransactionRegistryException;
+import com.oi.financialoilservices.exception.InvalidOperationException;
 import com.oi.financialoilservices.exception.OilRegistryNotFoundException;
 import com.oi.financialoilservices.exception.SaveOilTransactionRegistryException;
 import com.oi.financialoilservices.repository.OilRepository;
@@ -13,10 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static java.time.LocalDateTime.now;
 import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.EnumUtils.isValidEnumIgnoreCase;
 
 @Slf4j
 @Service
@@ -28,13 +31,14 @@ public class OilTransactionService {
     @Autowired
     private OilTransactionRepository oilTransactionRepository;
 
-    public OilTransaction persistOilTransactionOnDatabase(final InputOilTransactionDto inputOilTransactionDto) {
+    @Autowired
+    private StatisticsService statisticsService;
+
+    private OilTransaction persistOilTransactionOnDatabase(final InputOilTransactionDto inputOilTransactionDto) {
         log.info("Persist Oil transaction registry on database");
-        inputOilTransactionDto.validate(inputOilTransactionDto);
-        final Oil oil = oilRepository.findByOilId(inputOilTransactionDto.getOilId());
         try {
             return oilTransactionRepository.save(new OilTransaction(inputOilTransactionDto.getVolume(), inputOilTransactionDto.getPrice(),
-                    inputOilTransactionDto.getOperation(), initializeOilObject(inputOilTransactionDto.getOilId())));
+                    inputOilTransactionDto.getOperation().toUpperCase(), initializeOilObject(inputOilTransactionDto.getOilId())));
         } catch (OilRegistryNotFoundException oilRegistryNotFoundException) {
             throw oilRegistryNotFoundException;
         } catch (Exception exception) {
@@ -42,6 +46,33 @@ public class OilTransactionService {
             throw new SaveOilTransactionRegistryException();
         }
     }
+
+    public ResponseOilTransactionDto oilTransactionOperation(final InputOilTransactionDto inputOilTransactionDto) {
+        log.info("Start oil transaction operation");
+
+        if (!isValidEnumIgnoreCase(Operations.class, inputOilTransactionDto.getOperation())) {
+            log.error("Invalid Operation {}", inputOilTransactionDto.getOperation());
+            throw new InvalidOperationException();
+        }
+
+        final OilTransaction oilTransaction = persistOilTransactionOnDatabase(inputOilTransactionDto);
+
+        final BigDecimal revenueYield;
+        final int revenue;
+
+        if (isNull(oilTransaction.getOil().getFixedRevenue())) {
+            revenue = oilTransaction.getOil().getVariableRevenue();
+            revenueYield = statisticsService.calculateRevenueYield(revenue, oilTransaction.getOil().getOilBarrelValue(), oilTransaction.getPrice());
+        } else {
+            revenue = oilTransaction.getOil().getFixedRevenue();
+            revenueYield = statisticsService.calculateRevenueYield(revenue, oilTransaction.getPrice());
+        }
+
+        return new ResponseOilTransactionDto(oilTransaction.getTransactionId(), oilTransaction.getVolume(), oilTransaction.getPrice(), oilTransaction.getOperation(),
+                oilTransaction.getOil(), oilTransaction.getTransactionDateTime(), revenueYield, statisticsService.calculatePriceEarningsRatio(oilTransaction.getPrice(), revenue),
+                statisticsService.calculateVolumeWeightedOilPriceProcess(oilTransaction.getOil().getOilType().getOilType()));
+    }
+
 
     public OilTransaction getOilTransactionOnDatabase(final long oilTransactionId) {
         log.info("Get Oil transaction(s) registry on database");
@@ -61,16 +92,6 @@ public class OilTransactionService {
         } catch (Exception exception) {
             log.error("Error to get oil transaction(s) registry", exception);
             throw new GetOilTransactionRegistryException();
-        }
-    }
-
-    public List<OilTransaction> getOilTransactionOnDatabaseByLast30Minutes() {
-        log.info("Get Oil transaction(s) registry on database by last 30 minutes");
-        try {
-            return oilTransactionRepository.findByTransactionDateTimeBetween(now().minusMinutes(30), now());
-        } catch (Exception exception) {
-            log.error("Error to get oil transaction(s) registry", exception);
-            throw new GetOilTransactionOnDatabaseByLast30MinutesException();
         }
     }
 

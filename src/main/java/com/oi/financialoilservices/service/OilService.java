@@ -28,7 +28,6 @@ public class OilService {
 
     public Oil persistOilRegistry(final InputOilDto inputOilDto) {
         log.info("Persist Oil registry on database");
-        inputOilDto.validate(inputOilDto);
         try {
             final OilType oilType = initializeOilTypeObject(inputOilDto.getOilTypeId());
             final Oil oil = (isNull(inputOilDto.getVariableRevenue())) ? new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getOilBarrelValue()) :

@@ -14,5 +14,5 @@ public interface OilTransactionRepository extends CrudRepository<OilTransaction,
 
     List<OilTransaction> findAll();
 
-    List<OilTransaction> findByTransactionDateTimeBetween(final LocalDateTime transactionDateStart, final LocalDateTime transactionDateEnd);
+    List<OilTransaction> findByOilOilTypeOilTypeAndTransactionDateTimeBetween(final String OilType, final LocalDateTime transactionDateStart, final LocalDateTime transactionDateEnd);
 }

@@ -1,6 +1,7 @@
 package com.oi.financialoilservices.controller;
 
 import com.oi.financialoilservices.dto.InputOilTransactionDto;
+import com.oi.financialoilservices.dto.ResponseOilTransactionDto;
 import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.service.OilTransactionService;
 import io.swagger.annotations.Api;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,8 +36,8 @@ public class OilTransactionServiceController {
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
-    public OilTransaction inputOilTransaction(@RequestBody InputOilTransactionDto inputOilTransactionDto) {
-        return oilTransactionService.persistOilTransactionOnDatabase(inputOilTransactionDto);
+    public ResponseOilTransactionDto inputOilTransaction(@Valid @RequestBody InputOilTransactionDto inputOilTransactionDto) {
+        return oilTransactionService.oilTransactionOperation(inputOilTransactionDto) ;
     }
 
     @GetMapping(value = "/{transactionId}")

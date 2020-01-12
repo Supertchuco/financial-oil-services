@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,7 +36,7 @@ public class OilServiceController {
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
 
-    public Oil inputOil(@RequestBody InputOilDto inputOilDto) {
+    public Oil inputOil(@Valid @RequestBody InputOilDto inputOilDto) {
         return oilService.persistOilRegistry(inputOilDto);
     }
 

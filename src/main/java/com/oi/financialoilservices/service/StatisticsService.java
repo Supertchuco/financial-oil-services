@@ -1,10 +1,10 @@
 package com.oi.financialoilservices.service;
 
-import com.oi.financialoilservices.dto.InputOilDto;
-import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
-import com.oi.financialoilservices.entity.OilType;
-import com.oi.financialoilservices.exception.*;
+import com.oi.financialoilservices.exception.CalculateGeometricMeanException;
+import com.oi.financialoilservices.exception.CalculatePriceEarningsRatioException;
+import com.oi.financialoilservices.exception.CalculateRevenueYieldStandardException;
+import com.oi.financialoilservices.exception.CalculateVolumeWeightedOilPriceException;
 import com.oi.financialoilservices.repository.OilRepository;
 import com.oi.financialoilservices.repository.OilTransactionRepository;
 import com.oi.financialoilservices.repository.OilTypeRepository;
@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
-import static java.util.Objects.isNull;
 
 @Slf4j
 @Service
@@ -76,7 +76,12 @@ public class StatisticsService {
         }
     }
 
-    public BigDecimal calculateVolumeWeightedOilPrice(final List<OilTransaction> transactions) {
+    public BigDecimal calculateVolumeWeightedOilPriceProcess(final String oilType) {
+        List<OilTransaction> transactions = oilTransactionRepository.findByOilOilTypeOilTypeAndTransactionDateTimeBetween(oilType, now().minusMinutes(30), now());
+        return (CollectionUtils.isEmpty(transactions)) ? BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_EVEN) : calculateVolumeWeightedOilPrice(transactions);
+    }
+
+    private BigDecimal calculateVolumeWeightedOilPrice(final List<OilTransaction> transactions) {
         long totalQuantity = 0;
         BigDecimal totalQuantityXPrice = BigDecimal.ZERO;
         try {

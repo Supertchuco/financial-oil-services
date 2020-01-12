@@ -2,14 +2,14 @@ package com.oi.financialoilservices.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Data
+@Getter
 @Entity(name = "Oil")
 @Table(name = "Oil")
 @AllArgsConstructor
