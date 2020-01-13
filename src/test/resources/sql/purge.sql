@@ -1,6 +1,3 @@
-DELETE FROM Exam;
-DELETE FROM Patient;
-DELETE FROM Physician;
-DELETE FROM Procedure;
-DELETE FROM User;
-DELETE FROM Institution;
+DELETE FROM Oil_Transaction;
+DELETE FROM Oil;
+DELETE FROM Oil_Type;

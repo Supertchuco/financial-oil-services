@@ -4,14 +4,14 @@ plugins {
 	id 'java'
 }
 
-/*jar {
+jar {
 	baseName = 'oil-services'
-}*/
+}
 
 
-/*apply plugin: 'io.spring.dependency-management'
+/*apply plugin: 'io.spring.dependency-management'*/
 apply plugin: 'checkstyle'
-apply plugin: 'pmd'*/
+apply plugin: 'pmd'
 
 group = 'com.oi'
 version = '0.0.1-SNAPSHOT'
@@ -55,11 +55,6 @@ test {
 	useJUnitPlatform()
 }
 
-/*asciidoctor {
-	inputs.dir snippetsDir
-	dependsOn test
-}
-
 checkstyle {
 	toolVersion = '8.18'
 	ignoreFailures = false
@@ -71,4 +66,4 @@ pmd {
 	toolVersion = '5.5.7'
 	ignoreFailures = false
 	ruleSetFiles = files('config/pmd/pmd.xml')
-}*/
+}

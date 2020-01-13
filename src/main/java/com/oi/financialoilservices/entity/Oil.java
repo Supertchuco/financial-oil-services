@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
+@Setter
 @Entity(name = "Oil")
 @Table(name = "Oil")
 @AllArgsConstructor
@@ -27,10 +29,10 @@ public class Oil implements Serializable {
     private OilType oilType;
 
     @Column
-    private int fixedRevenue;
+    private Integer fixedRevenue;
 
     @Column
-    private int variableRevenue;
+    private Integer variableRevenue;
 
     @Column
     private BigDecimal oilBarrelValue;

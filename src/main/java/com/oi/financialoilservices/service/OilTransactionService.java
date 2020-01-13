@@ -6,7 +6,7 @@ import com.oi.financialoilservices.entity.Oil;
 import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.enumerator.Operations;
 import com.oi.financialoilservices.exception.GetOilTransactionRegistryException;
-import com.oi.financialoilservices.exception.InvalidOperationException;
+import com.oi.financialoilservices.exception.InvalidOilTransactionOperationException;
 import com.oi.financialoilservices.exception.OilRegistryNotFoundException;
 import com.oi.financialoilservices.exception.SaveOilTransactionRegistryException;
 import com.oi.financialoilservices.repository.OilRepository;
@@ -52,7 +52,7 @@ public class OilTransactionService {
 
         if (!isValidEnumIgnoreCase(Operations.class, inputOilTransactionDto.getOperation())) {
             log.error("Invalid Operation {}", inputOilTransactionDto.getOperation());
-            throw new InvalidOperationException();
+            throw new InvalidOilTransactionOperationException();
         }
 
         final OilTransaction oilTransaction = persistOilTransactionOnDatabase(inputOilTransactionDto);

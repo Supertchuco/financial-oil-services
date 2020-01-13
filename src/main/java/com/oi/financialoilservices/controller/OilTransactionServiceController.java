@@ -28,7 +28,7 @@ public class OilTransactionServiceController {
     @Autowired
     private OilTransactionService oilTransactionService;
 
-    @PostMapping(value = "/")
+    @PostMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Input oil transaction registry on database.")
     @ApiResponses({
@@ -52,7 +52,7 @@ public class OilTransactionServiceController {
         return oilTransactionService.getOilTransactionOnDatabase(transactionId);
     }
 
-    @GetMapping(value = "")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Retrieve all oil transactions on database.")
     @ApiResponses({

@@ -1,6 +1,6 @@
 {
   "id": "oilTest",
   "oilBarrelValue": 10.50,
-  "oilTypeId": "Premium",
+  "oilTypeId": "INVALID OIL TYPE",
   "variableRevenue": 15.5
 }

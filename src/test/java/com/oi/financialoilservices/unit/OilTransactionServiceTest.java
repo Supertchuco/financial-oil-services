@@ -6,7 +6,7 @@ import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.entity.OilType;
 import com.oi.financialoilservices.enumerator.Operations;
 import com.oi.financialoilservices.exception.GetOilTransactionRegistryException;
-import com.oi.financialoilservices.exception.InvalidOperationException;
+import com.oi.financialoilservices.exception.InvalidOilTransactionOperationException;
 import com.oi.financialoilservices.exception.OilRegistryNotFoundException;
 import com.oi.financialoilservices.exception.SaveOilTransactionRegistryException;
 import com.oi.financialoilservices.repository.OilRepository;
@@ -88,7 +88,7 @@ public class OilTransactionServiceTest {
         assertNotNull(oilTransactionService.oilTransactionOperation(new InputOilTransactionDto(Operations.BUY.name(), 10, BigDecimal.valueOf(5), "OilIdTest")));
     }
 
-    @Test(expected = InvalidOperationException.class)
+    @Test(expected = InvalidOilTransactionOperationException.class)
     public void shouldThrowInvalidOperationExceptionWhenOperationIsInvalidInRequestBodyDuringPersistOilTransactionOnDatabase() {
         doReturn(buildOilObject()).when(oilRepository).findByOilId(anyString());
         oilTransactionService.oilTransactionOperation(new InputOilTransactionDto("INVALID OPERATION", 10, BigDecimal.valueOf(5), "OilIdTest"));

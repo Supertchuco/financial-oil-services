@@ -1,5 +1,6 @@
 package com.oi.financialoilservices.controller;
 
+import com.oi.financialoilservices.dto.ResponseGeometricMeanDto;
 import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.service.StatisticsService;
 import io.swagger.annotations.Api;
@@ -34,7 +35,7 @@ public class StatisticsServiceController {
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
-    public String calculateGeometricMean() {
-        return null;
+    public ResponseGeometricMeanDto calculateGeometricMean() {
+        return statisticsService.calculateGeometricMeanProcess();
     }
 }

@@ -1,6 +1,6 @@
 {
   "oilId": "QFC",
-  "operation": "Buy",
+  "operation": "INVALID_OPERATION",
   "price": 10.08,
   "volume": 8.5
 }

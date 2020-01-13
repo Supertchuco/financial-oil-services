@@ -1,5 +1,6 @@
 package com.oi.financialoilservices.service;
 
+import com.oi.financialoilservices.dto.ResponseGeometricMeanDto;
 import com.oi.financialoilservices.entity.OilTransaction;
 import com.oi.financialoilservices.exception.CalculateGeometricMeanException;
 import com.oi.financialoilservices.exception.CalculatePriceEarningsRatioException;
@@ -58,11 +59,17 @@ public class StatisticsService {
     public BigDecimal calculatePriceEarningsRatio(final BigDecimal price, final int revenue) {
         try {
             log.info("Calculate Price-Earnings Ratio");
-            return price.divide(BigDecimal.valueOf(revenue));
+            return price.divide(BigDecimal.valueOf(revenue), 2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Price-Earnings Ratio", exception);
             throw new CalculatePriceEarningsRatioException();
         }
+    }
+
+    public ResponseGeometricMeanDto calculateGeometricMeanProcess() {
+        final List<BigDecimal> values = oilTransactionRepository.findAllPricesInAllOilTransactions();
+        ResponseGeometricMeanDto geometricMeanDto = new ResponseGeometricMeanDto((CollectionUtils.isEmpty(values)) ? BigDecimal.ZERO : calculateGeometricMean(values));
+        return geometricMeanDto;
     }
 
     public BigDecimal calculateGeometricMean(final List<BigDecimal> values) {
