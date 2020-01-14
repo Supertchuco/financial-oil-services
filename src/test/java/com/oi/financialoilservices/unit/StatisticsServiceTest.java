@@ -72,7 +72,8 @@ public class StatisticsServiceTest {
 
     @Test
     public void shouldCalculatePriceEarningsRatioWithSuccess() {
-        assertEquals(BigDecimal.valueOf(2.47).setScale(2, RoundingMode.HALF_EVEN), statisticsService.calculatePriceEarningsRatio(BigDecimal.valueOf(12.35),
+        assertEquals(BigDecimal.valueOf(2.47).setScale(2, RoundingMode.HALF_EVEN), statisticsService
+                .calculatePriceEarningsRatio(BigDecimal.valueOf(12.35),
                 5));
     }
 
@@ -84,6 +85,7 @@ public class StatisticsServiceTest {
     @Test
     public void shouldCalculateGeometricMeanWithSuccess() {
         assertEquals(BigDecimal.valueOf(7.34).setScale(2, RoundingMode.HALF_EVEN),
-                statisticsService.calculateGeometricMean(Arrays.asList(BigDecimal.valueOf(9.20), BigDecimal.valueOf(4.21), BigDecimal.valueOf(10.22))));
+                statisticsService.calculateGeometricMean(Arrays.asList(BigDecimal.valueOf(9.20), BigDecimal.valueOf(4.21),
+                        BigDecimal.valueOf(10.22))));
     }
 }

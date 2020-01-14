@@ -30,8 +30,9 @@ public class OilService {
         log.info("Persist Oil registry on database");
         try {
             final OilType oilType = initializeOilTypeObject(inputOilDto.getOilTypeId());
-            final Oil oil = (isNull(inputOilDto.getVariableRevenue())) ? new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getOilBarrelValue()) :
-                    new Oil(inputOilDto.getId(), oilType, inputOilDto.getFixedRevenue(), inputOilDto.getVariableRevenue(), inputOilDto.getOilBarrelValue());
+            final Oil oil = (isNull(inputOilDto.getVariableRevenue())) ? new Oil(inputOilDto.getId(), oilType,
+                    inputOilDto.getFixedRevenue(), inputOilDto.getOilBarrelValue()) : new Oil(inputOilDto.getId(),
+                    oilType, inputOilDto.getFixedRevenue(), inputOilDto.getVariableRevenue(), inputOilDto.getOilBarrelValue());
             return oilRepository.save(oil);
         } catch (OilTypeRegistryNotFoundException oilTypeRegistryNotFoundException) {
             throw oilTypeRegistryNotFoundException;

@@ -12,11 +12,12 @@ import java.util.List;
 @Repository
 public interface OilTransactionRepository extends CrudRepository<OilTransaction, Long> {
 
-    OilTransaction findByTransactionId(final Long transactionId);
+    OilTransaction findByTransactionId(Long transactionId);
 
     List<OilTransaction> findAll();
 
-    List<OilTransaction> findByOilOilTypeOilTypeAndTransactionDateTimeBetween(final String OilType, final LocalDateTime transactionDateStart, final LocalDateTime transactionDateEnd);
+    List<OilTransaction> findByOilOilTypeOilTypeAndTransactionDateTimeBetween(String oilType,
+                                                                              LocalDateTime transactionDateStart, LocalDateTime transactionDateEnd);
 
     @Query("select distinct oilTransaction.price from OilTransaction oilTransaction")
     List<BigDecimal> findAllPricesInAllOilTransactions();

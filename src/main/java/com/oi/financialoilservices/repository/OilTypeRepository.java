@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OilTypeRepository extends CrudRepository<OilType, Long> {
 
-    OilType findByOilType(final String oidType);
+    OilType findByOilType(String oidType);
 }
 
 

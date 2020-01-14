@@ -68,7 +68,8 @@ public class StatisticsService {
 
     public ResponseGeometricMeanDto calculateGeometricMeanProcess() {
         final List<BigDecimal> values = oilTransactionRepository.findAllPricesInAllOilTransactions();
-        ResponseGeometricMeanDto geometricMeanDto = new ResponseGeometricMeanDto((CollectionUtils.isEmpty(values)) ? BigDecimal.ZERO : calculateGeometricMean(values));
+        ResponseGeometricMeanDto geometricMeanDto = new ResponseGeometricMeanDto((CollectionUtils.isEmpty(values))
+                ? BigDecimal.ZERO : calculateGeometricMean(values));
         return geometricMeanDto;
     }
 
@@ -84,8 +85,10 @@ public class StatisticsService {
     }
 
     public BigDecimal calculateVolumeWeightedOilPriceProcess(final String oilType) {
-        List<OilTransaction> transactions = oilTransactionRepository.findByOilOilTypeOilTypeAndTransactionDateTimeBetween(oilType, now().minusMinutes(30), now());
-        return (CollectionUtils.isEmpty(transactions)) ? BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_EVEN) : calculateVolumeWeightedOilPrice(transactions);
+        List<OilTransaction> transactions = oilTransactionRepository.findByOilOilTypeOilTypeAndTransactionDateTimeBetween(oilType,
+                now().minusMinutes(30), now());
+        return (CollectionUtils.isEmpty(transactions)) ? BigDecimal.valueOf(0.00).setScale(2, RoundingMode.HALF_EVEN)
+                : calculateVolumeWeightedOilPrice(transactions);
     }
 
     private BigDecimal calculateVolumeWeightedOilPrice(final List<OilTransaction> transactions) {
@@ -95,9 +98,11 @@ public class StatisticsService {
             log.info("Calculate Volume Weighted Oil Price");
             for (OilTransaction transaction : transactions) {
                 totalQuantity += transaction.getVolume();
-                totalQuantityXPrice = totalQuantityXPrice.add(BigDecimal.valueOf(transaction.getVolume()).multiply(transaction.getPrice()).setScale(2, RoundingMode.HALF_EVEN));
+                totalQuantityXPrice = totalQuantityXPrice.add(BigDecimal.valueOf(transaction.getVolume())
+                        .multiply(transaction.getPrice()).setScale(2, RoundingMode.HALF_EVEN));
             }
-            return totalQuantityXPrice.divide(BigDecimal.valueOf(totalQuantity), 2, RoundingMode.HALF_EVEN).setScale(2, RoundingMode.HALF_EVEN);
+            return totalQuantityXPrice.divide(BigDecimal.valueOf(totalQuantity), 2,
+                    RoundingMode.HALF_EVEN).setScale(2, RoundingMode.HALF_EVEN);
         } catch (Exception exception) {
             log.error("Error to calculate Volume Weighted Oil Price", exception);
             throw new CalculateVolumeWeightedOilPriceException();

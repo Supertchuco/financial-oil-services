@@ -24,9 +24,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.UnusedPrivateField"})
 @SpringBootTest
 public class OilServiceTest {
+
+    private static final String OIL_ID_TEST = "OilIdTest";
 
     @InjectMocks
     private OilService oilService;
@@ -46,35 +47,35 @@ public class OilServiceTest {
 
     @Test
     public void shouldPersistOilRegistryWithSuccess() {
-        doReturn(new OilType("OilIdTest", "test")).when(oilTypeRepository).findByOilType(anyString());
+        doReturn(new OilType(OIL_ID_TEST, "test")).when(oilTypeRepository).findByOilType(anyString());
         doReturn(new Oil()).when(oilRepository).save(any(Oil.class));
-        assertNotNull(oilService.persistOilRegistry(new InputOilDto("OilIdTest", "typeTest", 1, 1, BigDecimal.valueOf(10.21))));
+        assertNotNull(oilService.persistOilRegistry(new InputOilDto(OIL_ID_TEST, "typeTest", 1, 1, BigDecimal.valueOf(10.21))));
     }
 
     @Test(expected = OilTypeRegistryNotFoundException.class)
     public void shouldThrowOilTypeRegistryNotFoundExceptionWhenOilTypeNotFoundDuringPersistOilRegistry() {
         doThrow(OilTypeRegistryNotFoundException.class).when(oilTypeRepository).findByOilType(anyString());
         doReturn(new Oil()).when(oilRepository).save(any(Oil.class));
-        oilService.persistOilRegistry(new InputOilDto("OilIdTest", "typeTest", 1, 1, BigDecimal.valueOf(10.21)));
+        oilService.persistOilRegistry(new InputOilDto(OIL_ID_TEST, "typeTest", 1, 1, BigDecimal.valueOf(10.21)));
     }
 
     @Test(expected = SaveOilRegistryException.class)
     public void shouldThrowSaveOilRegistryExceptionWhenSomeErrorHappenedInOilRepository() {
         doThrow(NullPointerException.class).when(oilRepository).save(any(Oil.class));
-        doReturn(new OilType("OilIdTest", "test")).when(oilTypeRepository).findByOilType(anyString());
-        oilService.persistOilRegistry(new InputOilDto("OilIdTest", "typeTest", 1, 1, BigDecimal.valueOf(10.21)));
+        doReturn(new OilType(OIL_ID_TEST, "test")).when(oilTypeRepository).findByOilType(anyString());
+        oilService.persistOilRegistry(new InputOilDto(OIL_ID_TEST, "typeTest", 1, 1, BigDecimal.valueOf(10.21)));
     }
 
     @Test
     public void shouldGetOilRegistryOnDatabaseByIdWithSuccess() {
         doReturn(new Oil()).when(oilRepository).findByOilId(anyString());
-        assertNotNull(oilService.getOilRegistryOnDatabase("oilIdTest"));
+        assertNotNull(oilService.getOilRegistryOnDatabase(OIL_ID_TEST));
     }
 
     @Test(expected = GetOilException.class)
     public void shouldThrowGetOilExceptionWhenSomeErrorHappenedInOilRepositoryDuringGetOilRegistryOnDatabaseById() {
         doThrow(GetOilException.class).when(oilRepository).findByOilId(anyString());
-        assertNotNull(oilService.getOilRegistryOnDatabase("oilIdTest"));
+        assertNotNull(oilService.getOilRegistryOnDatabase(OIL_ID_TEST));
     }
 
     @Test
@@ -91,7 +92,7 @@ public class OilServiceTest {
 
     @Test
     public void shouldInitializeOilTypeObjectWithSuccess() {
-        doReturn(new OilType("OilIdTest", "test")).when(oilTypeRepository).findByOilType(anyString());
+        doReturn(new OilType(OIL_ID_TEST, "test")).when(oilTypeRepository).findByOilType(anyString());
         inputArray = new Object[]{"IdType"};
         assertNotNull(ReflectionTestUtils.invokeMethod(oilService, "initializeOilTypeObject", inputArray));
     }

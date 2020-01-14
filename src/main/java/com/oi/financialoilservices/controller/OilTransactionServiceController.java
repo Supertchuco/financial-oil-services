@@ -37,7 +37,7 @@ public class OilTransactionServiceController {
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
     public ResponseOilTransactionDto inputOilTransaction(@Valid @RequestBody InputOilTransactionDto inputOilTransactionDto) {
-        return oilTransactionService.oilTransactionOperation(inputOilTransactionDto) ;
+        return oilTransactionService.oilTransactionOperation(inputOilTransactionDto);
     }
 
     @GetMapping(value = "/{transactionId}")

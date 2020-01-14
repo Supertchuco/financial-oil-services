@@ -62,17 +62,18 @@ public class OilTransactionService {
 
         if (isNull(oilTransaction.getOil().getFixedRevenue())) {
             revenue = oilTransaction.getOil().getVariableRevenue();
-            revenueYield = statisticsService.calculateRevenueYield(revenue, oilTransaction.getOil().getOilBarrelValue(), oilTransaction.getPrice());
+            revenueYield = statisticsService.calculateRevenueYield(revenue, oilTransaction.getOil().getOilBarrelValue(),
+                    oilTransaction.getPrice());
         } else {
             revenue = oilTransaction.getOil().getFixedRevenue();
             revenueYield = statisticsService.calculateRevenueYield(revenue, oilTransaction.getPrice());
         }
 
-        return new ResponseOilTransactionDto(oilTransaction.getTransactionId(), oilTransaction.getVolume(), oilTransaction.getPrice(), oilTransaction.getOperation(),
-                oilTransaction.getOil(), oilTransaction.getTransactionDateTime(), revenueYield, statisticsService.calculatePriceEarningsRatio(oilTransaction.getPrice(), revenue),
+        return new ResponseOilTransactionDto(oilTransaction.getTransactionId(), oilTransaction.getVolume(),
+                oilTransaction.getPrice(), oilTransaction.getOperation(), oilTransaction.getOil(), oilTransaction.getTransactionDateTime(),
+                revenueYield, statisticsService.calculatePriceEarningsRatio(oilTransaction.getPrice(), revenue),
                 statisticsService.calculateVolumeWeightedOilPriceProcess(oilTransaction.getOil().getOilType().getOilType()));
     }
-
 
     public OilTransaction getOilTransactionOnDatabase(final long oilTransactionId) {
         log.info("Get Oil transaction(s) registry on database");
