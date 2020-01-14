@@ -29,20 +29,20 @@ public class OilServiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Input oil registry on database.")
+    @ApiOperation(value = "Insert oil registry on database.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = Oil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
             @ApiResponse(code = 500, message = "Internal Server ErrorMessage", response = String.class)
     })
 
-    public Oil inputOil(@Valid @RequestBody InputOilDto inputOilDto) {
+    public Oil insertOil(@Valid @RequestBody InputOilDto inputOilDto) {
         return oilService.persistOilRegistry(inputOilDto);
     }
 
     @GetMapping(value = "/{oilId}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get oil registry by id on database or if id is null get all oil registries on database.")
+    @ApiOperation(value = "Retrieve oil registry by id on database.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = Oil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),
@@ -54,7 +54,7 @@ public class OilServiceController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Get all oil registries on database.")
+    @ApiOperation(value = "Retrieve all oil registries on database.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = Oil.class),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),

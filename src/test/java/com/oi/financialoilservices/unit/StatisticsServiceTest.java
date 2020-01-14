@@ -34,7 +34,7 @@ public class StatisticsServiceTest {
 
     @Test
     public void shouldCalculateVolumeWeightedOilPriceWithSuccess() {
-        List<OilTransaction> transactions = Arrays.asList(new OilTransaction(1L, BigDecimal.valueOf(10.20), null, null),
+        final List<OilTransaction> transactions = Arrays.asList(new OilTransaction(1L, BigDecimal.valueOf(10.20), null, null),
                 new OilTransaction(2L, BigDecimal.valueOf(10.21), null, null), new OilTransaction(3L,
                         BigDecimal.valueOf(10.22), null, null));
         inputArray = new Object[]{transactions};
@@ -43,7 +43,7 @@ public class StatisticsServiceTest {
 
     @Test(expected = CalculateVolumeWeightedOilPriceException.class)
     public void shouldThrowCalculateVolumeWeightedOilPriceExceptionWhenSomeErrorHappenedDuringCalculateVolumeWeightedOilPrice() {
-        List<OilTransaction> transactions = Arrays.asList(new OilTransaction());
+        final List<OilTransaction> transactions = Arrays.asList(new OilTransaction());
         inputArray = new Object[]{transactions};
         ReflectionTestUtils.invokeMethod(statisticsService, "calculateVolumeWeightedOilPrice", inputArray);
     }

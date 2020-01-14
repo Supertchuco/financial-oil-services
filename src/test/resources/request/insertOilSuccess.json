@@ -1,5 +1,5 @@
 {
-  "id": "oilTest",
+  "oilId": "oilTest",
   "oilBarrelValue": 10.50,
   "oilTypeId": "Premium",
   "variableRevenue": 15.5

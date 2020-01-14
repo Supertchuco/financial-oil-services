@@ -30,7 +30,7 @@ public class OilTransactionServiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Input oil transaction registry on database.")
+    @ApiOperation(value = "Insert oil transaction registry on database.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = OilTransaction.class),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),

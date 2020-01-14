@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
-@Api(tags = "Oil transaction service controller")
+@Api(tags = "Statistics transaction service controller")
 @Slf4j
 @Controller
 public class StatisticsServiceController {
@@ -29,7 +29,7 @@ public class StatisticsServiceController {
 
     @GetMapping(value = "/geometricMean")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Calculate the Inventory Index using the geometric mean of prices for all the types of oil.")
+    @ApiOperation(value = "Calculate the Inventory Index using the geometric mean of prices for all oil types.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = OilTransaction.class),
             @ApiResponse(code = 400, message = "Bad Request", response = String.class),

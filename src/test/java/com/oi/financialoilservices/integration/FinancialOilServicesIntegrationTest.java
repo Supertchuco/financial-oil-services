@@ -32,14 +32,6 @@ public class FinancialOilServicesIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    private String payload;
-
-    private HttpEntity<String> entity;
-
-    private ResponseEntity<String> response;
-
-    private String examId;
-
     private static String readJson(String filename) {
         try {
             return FileUtils.readFileToString(ResourceUtils.getFile("classpath:" + filename), "UTF-8");
@@ -49,24 +41,24 @@ public class FinancialOilServicesIntegrationTest {
     }
 
     private HttpHeaders buildHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
 
     @Test
     public void shouldReturn200WhenInsertNewOilRegistryWithSuccess() {
-        String payload = readJson("request/insertOilSuccess.json");
-        HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.POST, entity, String.class);
+        final String payload = readJson("request/insertOilSuccess.json");
+        final HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void shouldReturn400WhenInsertNewOilRegistryWithInvalidOilType() {
-        String payload = readJson("request/insertOilWithInvalidOilType.json");
-        HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.POST,
+        final String payload = readJson("request/insertOilWithInvalidOilType.json");
+        final HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.POST,
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().contains(ErrorMessages.ERROR_OIL_TYPE_REGISTRY_NOT_FOUND_ON_DATABASE.getMessage()));
@@ -74,8 +66,8 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200AndOilRegistryWhenGetOilRegistryByIdWithSuccess() {
-        HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT).concat("/TIM"), HttpMethod.GET,
+        final HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT).concat("/TIM"), HttpMethod.GET,
                 entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final String result = "{\"oilId\":\"TIM\",\"oilType\":{\"oilType\":\"Premium\",\"description\":\"Premium type\"},\"fixedRevenue\":5,"
@@ -85,8 +77,8 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200AndOilRegistriesWhenGetAllOilRegistriesWithSuccess() {
-        HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.GET, entity, String.class);
+        final HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_ENDPOINT), HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final String result = "[{\"oilId\":\"AAC\",\"oilType\":{\"oilType\":\"Standard\",\"description\":\"Standard type\"},\"fixedRevenue\":1,"
                 + "\"variableRevenue\":null,\"oilBarrelValue\":42.00},{\"oilId\":\"REW\",\"oilType\":{\"oilType\":\"Standard\","
@@ -101,18 +93,18 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200WhenInsertNewOilTransactionRegistryWithSuccess() {
-        String payload = readJson("request/insertOilTransactionSuccess.json");
-        HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
+        final String payload = readJson("request/insertOilTransactionSuccess.json");
+        final HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
                 HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     public void shouldReturn400WhenInsertNewOilTransactionRegistryWithInvalidOil() {
-        String payload = readJson("request/insertOilTransactionWithInvalidOil.json");
-        HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
+        final String payload = readJson("request/insertOilTransactionWithInvalidOil.json");
+        final HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
                 HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().contains(ErrorMessages.ERROR_OIL_REGISTRY_NOT_FOUND_ON_DATABASE.getMessage()));
@@ -120,9 +112,9 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn400WhenInsertNewOilTransactionRegistryWithInvalidOperation() {
-        String payload = readJson("request/insertOilTransactionWithInvalidOperation.json");
-        HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
+        final String payload = readJson("request/insertOilTransactionWithInvalidOperation.json");
+        final HttpEntity<String> entity = new HttpEntity<String>(payload, buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT),
                 HttpMethod.POST, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().contains(ErrorMessages.ERROR_INVALID_OIL_TRANSACTION_OPERATION.getMessage()));
@@ -130,8 +122,9 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200AndOilRegistryWhenGetOilTransactionRegistryByIdWithSuccess() {
-        HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT).concat("/99"), HttpMethod.GET,
+        final HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT)
+                        .concat("/99"), HttpMethod.GET,
                 entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final String result = "{\"transactionId\":99,\"volume\":11,\"price\":50.25,\"operation\":\"Buy\",\"oil\":{\"oilId\":\"REW\","
@@ -142,8 +135,8 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200AndOilRegistriesWhenGetAllOilTransactionRegistriesWithSuccess() {
-        HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT), HttpMethod.GET,
+        final HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_TRANSACTION_ENDPOINT), HttpMethod.GET,
                 entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         final String result = "{\"transactionId\":90,\"volume\":11,\"price\":48.25,\"operation\":\"Sell\",\"oil\":{\"oilId\":\"BWO\","
@@ -157,8 +150,8 @@ public class FinancialOilServicesIntegrationTest {
 
     @Test
     public void shouldReturn200WhenGetGeometricMeanWithSuccess() {
-        HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
-        ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_STATISTICS_ENDPOINT).concat("/geometricMean"),
+        final HttpEntity<String> entity = new HttpEntity<String>(buildHttpHeaders());
+        final ResponseEntity<String> response = testRestTemplate.exchange(BASE_ENDPOINT.concat(OIL_STATISTICS_ENDPOINT).concat("/geometricMean"),
                 HttpMethod.GET,
                 entity, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());

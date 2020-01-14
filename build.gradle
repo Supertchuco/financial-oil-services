@@ -4,22 +4,15 @@ plugins {
 	id 'java'
 }
 
-jar {
-	baseName = 'oil-services'
-}
-
-
 /*apply plugin: 'io.spring.dependency-management'*/
 apply plugin: 'checkstyle'
 apply plugin: 'pmd'
 
 group = 'com.oi'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
 
-/*bootJar {
-	baseName = 'healthcare-management'
-}*/
+bootJar {
+	archiveFileName = 'oil-service'
+}
 
 configurations {
 	compileOnly {

@@ -15,7 +15,6 @@ import java.io.Serializable;
 @Table(name = "OilType")
 @AllArgsConstructor
 @NoArgsConstructor
-@SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
 public class OilType implements Serializable {
 
     @Id

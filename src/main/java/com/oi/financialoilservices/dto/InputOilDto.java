@@ -10,10 +10,9 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuppressWarnings({"PMD.ImmutableField", "PMD.ShortVariable"})
 public class InputOilDto implements Serializable {
 
-    private String id;
+    private String oilId;
 
     private String oilTypeId;
 

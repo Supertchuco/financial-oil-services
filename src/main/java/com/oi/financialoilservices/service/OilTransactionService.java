@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.EnumUtils.isValidEnumIgnoreCase;
@@ -38,7 +39,7 @@ public class OilTransactionService {
         log.info("Persist Oil transaction registry on database");
         try {
             return oilTransactionRepository.save(new OilTransaction(inputOilTransactionDto.getVolume(), inputOilTransactionDto.getPrice(),
-                    inputOilTransactionDto.getOperation().toUpperCase(), initializeOilObject(inputOilTransactionDto.getOilId())));
+                    inputOilTransactionDto.getOperation().toUpperCase(Locale.US), initializeOilObject(inputOilTransactionDto.getOilId())));
         } catch (OilRegistryNotFoundException oilRegistryNotFoundException) {
             throw oilRegistryNotFoundException;
         } catch (Exception exception) {
